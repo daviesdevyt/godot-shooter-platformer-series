@@ -1,0 +1,53 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://assets/sGunhover.png" type="Texture" id=1]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Area2D
+
+
+
+
+
+func _on_pickup_gun_body_entered(body):
+	if body.name == 'player':
+		body.pick(\"gun\")
+		autoload.has_gun = true
+		queue_free()
+"
+
+[sub_resource type="RectangleShape2D" id=2]
+extents = Vector2( 11.0597, 12.8144 )
+
+[sub_resource type="Animation" id=3]
+resource_name = "float"
+length = 0.8
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.4 ),
+"transitions": PoolRealArray( 4.14106, 0.353553 ),
+"update": 0,
+"values": [ Vector2( 0, -4 ), Vector2( 0, 4 ) ]
+}
+
+[node name="pickup_gun" type="Area2D"]
+script = SubResource( 1 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+modulate = Color( 0.964706, 0.0509804, 0.823529, 1 )
+shape = SubResource( 2 )
+
+[node name="Sprite" type="Sprite" parent="."]
+position = Vector2( 0, -4 )
+texture = ExtResource( 1 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+autoplay = "float"
+anims/float = SubResource( 3 )
+[connection signal="body_entered" from="." to="." method="_on_pickup_gun_body_entered"]

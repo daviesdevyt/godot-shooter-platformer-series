@@ -1,0 +1,105 @@
+[gd_scene load_steps=15 format=2]
+
+[ext_resource path="res://assets/sPlayer2.png" type="Texture" id=1]
+[ext_resource path="res://objects/player.gd" type="Script" id=2]
+[ext_resource path="res://assets/sPlayer.png" type="Texture" id=3]
+[ext_resource path="res://assets/sPlayer_a_strip2.png" type="Texture" id=4]
+[ext_resource path="res://assets/sPlayer_r_strip4.png" type="Texture" id=5]
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 8.58464, 16.1383 )
+
+[sub_resource type="AtlasTexture" id=2]
+flags = 4
+atlas = ExtResource( 4 )
+region = Rect2( 0, 0, 48, 48 )
+
+[sub_resource type="AtlasTexture" id=3]
+flags = 4
+atlas = ExtResource( 4 )
+region = Rect2( 48, 0, 48, 48 )
+
+[sub_resource type="AtlasTexture" id=4]
+flags = 4
+atlas = ExtResource( 5 )
+region = Rect2( 0, 0, 48, 48 )
+
+[sub_resource type="AtlasTexture" id=5]
+flags = 4
+atlas = ExtResource( 5 )
+region = Rect2( 48, 0, 48, 48 )
+
+[sub_resource type="AtlasTexture" id=6]
+flags = 4
+atlas = ExtResource( 5 )
+region = Rect2( 96, 0, 48, 48 )
+
+[sub_resource type="AtlasTexture" id=7]
+flags = 4
+atlas = ExtResource( 5 )
+region = Rect2( 144, 0, 48, 48 )
+
+[sub_resource type="SpriteFrames" id=8]
+animations = [ {
+"frames": [ ExtResource( 3 ), ExtResource( 1 ) ],
+"loop": true,
+"name": "idle",
+"speed": 2.0
+}, {
+"frames": [ SubResource( 2 ), SubResource( 3 ) ],
+"loop": true,
+"name": "jump",
+"speed": 1.0
+}, {
+"frames": [ SubResource( 4 ), SubResource( 5 ), SubResource( 6 ), SubResource( 7 ) ],
+"loop": true,
+"name": "run",
+"speed": 13.0
+} ]
+
+[sub_resource type="GDScript" id=9]
+script/source = "extends Node
+
+
+onready var camera = get_parent()
+var time = 0
+
+
+
+func _shake(duration := 0.8, magnitude := 8):
+	while time < duration:
+		time += get_process_delta_time()
+		time = min(time, duration)
+		var offset = Vector2()
+		offset.x = rand_range(-magnitude, magnitude)
+		offset.y = rand_range(-magnitude, magnitude)
+		camera.set_offset(offset)
+		yield(get_tree(),\"idle_frame\")
+	time = 0
+	camera.set_offset(Vector2.ZERO)
+"
+
+[node name="player" type="KinematicBody2D"]
+script = ExtResource( 2 )
+
+[node name="shape" type="CollisionShape2D" parent="."]
+position = Vector2( 0, 7 )
+shape = SubResource( 1 )
+
+[node name="Sprite" type="AnimatedSprite" parent="."]
+position = Vector2( 0.222725, -0.222725 )
+frames = SubResource( 8 )
+animation = "idle"
+frame = 1
+playing = true
+
+[node name="Camera2D" type="Camera2D" parent="."]
+current = true
+limit_left = 0
+limit_top = 0
+limit_bottom = 600
+limit_smoothed = true
+smoothing_enabled = true
+
+[node name="screen_shaker" type="Node" parent="Camera2D"]
+script = SubResource( 9 )

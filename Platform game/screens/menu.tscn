@@ -1,0 +1,306 @@
+[gd_scene load_steps=22 format=2]
+
+[ext_resource path="res://assets/fonts/AGENCYB.TTF" type="DynamicFontData" id=1]
+[ext_resource path="res://assets/sPlayer_r_strip4.png" type="Texture" id=2]
+[ext_resource path="res://assets/sMountain.png" type="Texture" id=3]
+[ext_resource path="res://assets/sTrees.png" type="Texture" id=4]
+[ext_resource path="res://assets/menutile.png" type="Texture" id=5]
+[ext_resource path="res://assets/fonts/COOPBL.TTF" type="DynamicFontData" id=6]
+[ext_resource path="res://screens/highscore.gd" type="Script" id=7]
+[ext_resource path="res://menu.tres" type="Theme" id=8]
+
+[sub_resource type="AtlasTexture" id=1]
+flags = 4
+atlas = ExtResource( 2 )
+region = Rect2( 0, 0, 48, 48 )
+
+[sub_resource type="AtlasTexture" id=2]
+flags = 4
+atlas = ExtResource( 2 )
+region = Rect2( 48, 0, 48, 48 )
+
+[sub_resource type="AtlasTexture" id=3]
+flags = 4
+atlas = ExtResource( 2 )
+region = Rect2( 96, 0, 48, 48 )
+
+[sub_resource type="AtlasTexture" id=4]
+flags = 4
+atlas = ExtResource( 2 )
+region = Rect2( 144, 0, 48, 48 )
+
+[sub_resource type="SpriteFrames" id=5]
+animations = [ {
+"frames": [ SubResource( 1 ), SubResource( 2 ), SubResource( 3 ), SubResource( 4 ) ],
+"loop": true,
+"name": "default",
+"speed": 13.0
+} ]
+
+[sub_resource type="GDScript" id=6]
+script/source = "extends VBoxContainer
+
+
+
+func _ready():
+	for i in get_children():
+		i.connect(\"mouse_entered\", self, \"_mouse_entered\", [i])
+		i.connect(\"mouse_exited\", self, \"_mouse_exited\", [i])
+		i.connect(\"focus_entered\", self, \"_focus_entered\", [i])
+		i.connect(\"focus_exited\", self, \"_focus_exited\", [i])
+
+
+func _mouse_entered(button: Button):
+	if button.text.find(\"> \", 0) == -1:
+		button.text = button.text.insert(0, \"> \")
+	
+func _mouse_exited(button: Button):
+	button.text = button.text.replace(\"> \", \"\")
+
+
+
+func _on_play_pressed():
+	Transition.transition(\"res://levels/Game1.tscn\")
+
+
+func _on_quit_pressed():
+	get_tree().quit()
+
+
+func _on_leaderboard_pressed():
+	var url = autoload.highscore_api
+	$leaderboard/HTTPRequest.request(url)
+	
+	
+"
+
+[sub_resource type="DynamicFont" id=7]
+size = 30
+font_data = ExtResource( 1 )
+
+[sub_resource type="DynamicFont" id=8]
+size = 40
+font_data = ExtResource( 1 )
+
+[sub_resource type="DynamicFont" id=9]
+size = 30
+font_data = ExtResource( 1 )
+
+[sub_resource type="Theme" id=10]
+default_font = SubResource( 9 )
+
+[sub_resource type="DynamicFont" id=11]
+size = 30
+font_data = ExtResource( 1 )
+
+[sub_resource type="DynamicFont" id=12]
+size = 20
+font_data = ExtResource( 6 )
+
+[sub_resource type="GDScript" id=13]
+script/source = "extends Camera2D
+
+func _process(delta):
+	offset.x += 200 * delta
+"
+
+[node name="menu" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_bottom = 0.00012207
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="BG" type="CanvasLayer" parent="."]
+
+[node name="ParallaxBackground" type="ParallaxBackground" parent="BG"]
+
+[node name="mountains" type="ParallaxLayer" parent="BG/ParallaxBackground"]
+motion_scale = Vector2( 0.5, 1 )
+motion_mirroring = Vector2( 1024, 0 )
+
+[node name="Sprite" type="Sprite" parent="BG/ParallaxBackground/mountains"]
+scale = Vector2( 1.6, 1.2 )
+texture = ExtResource( 3 )
+centered = false
+
+[node name="trees" type="ParallaxLayer" parent="BG/ParallaxBackground"]
+motion_scale = Vector2( 0.8, 1 )
+motion_mirroring = Vector2( 1024, 0 )
+
+[node name="Sprite" type="Sprite" parent="BG/ParallaxBackground/trees"]
+scale = Vector2( 1.6, 1.2 )
+texture = ExtResource( 4 )
+centered = false
+
+[node name="floor" type="ParallaxLayer" parent="BG/ParallaxBackground"]
+motion_mirroring = Vector2( 1024, 0 )
+
+[node name="Sprite" type="Sprite" parent="BG/ParallaxBackground/floor"]
+position = Vector2( 0, 516 )
+texture = ExtResource( 5 )
+centered = false
+
+[node name="Sprite" type="AnimatedSprite" parent="BG"]
+position = Vector2( 193.974, 492.579 )
+frames = SubResource( 5 )
+frame = 2
+playing = true
+
+[node name="node" type="CanvasLayer" parent="."]
+
+[node name="buttons" type="VBoxContainer" parent="node"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -52.5
+margin_top = -90.0
+margin_right = 52.5
+margin_bottom = 90.0
+custom_constants/separation = 20
+script = SubResource( 6 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="play" type="Button" parent="node/buttons"]
+margin_right = 147.0
+margin_bottom = 42.0
+size_flags_vertical = 3
+custom_fonts/font = SubResource( 7 )
+text = "Play"
+flat = true
+align = 0
+
+[node name="settings" type="Button" parent="node/buttons"]
+margin_top = 62.0
+margin_right = 147.0
+margin_bottom = 104.0
+size_flags_vertical = 3
+custom_fonts/font = SubResource( 7 )
+disabled = true
+text = "Settings"
+flat = true
+align = 0
+
+[node name="leaderboard" type="Button" parent="node/buttons"]
+margin_top = 124.0
+margin_right = 147.0
+margin_bottom = 166.0
+size_flags_vertical = 3
+custom_fonts/font = SubResource( 7 )
+text = "Leader board"
+flat = true
+align = 0
+
+[node name="HTTPRequest" type="HTTPRequest" parent="node/buttons/leaderboard"]
+
+[node name="quit" type="Button" parent="node/buttons"]
+margin_top = 186.0
+margin_right = 147.0
+margin_bottom = 228.0
+size_flags_vertical = 3
+custom_fonts/font = SubResource( 7 )
+text = "Quit"
+flat = true
+align = 0
+
+[node name="Panel" type="Panel" parent="node"]
+visible = false
+margin_left = 359.072
+margin_top = 118.801
+margin_right = 717.072
+margin_bottom = 532.801
+theme = ExtResource( 8 )
+script = ExtResource( 7 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="node/Panel"]
+anchor_right = 1.0
+margin_top = 2.0
+margin_bottom = 55.0
+custom_fonts/font = SubResource( 8 )
+text = "High scores"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="container" type="ScrollContainer" parent="node/Panel"]
+margin_left = 14.0
+margin_top = 55.0
+margin_right = 344.0
+margin_bottom = 400.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="highscores" type="VBoxContainer" parent="node/Panel/container"]
+margin_right = 330.0
+margin_bottom = 345.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="entity" type="HBoxContainer" parent="node/Panel/container/highscores"]
+visible = false
+margin_right = 330.0
+margin_bottom = 36.0
+theme = SubResource( 10 )
+
+[node name="name" type="Label" parent="node/Panel/container/highscores/entity"]
+margin_right = 200.0
+margin_bottom = 36.0
+rect_min_size = Vector2( 200, 0 )
+text = "Name"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="score" type="Label" parent="node/Panel/container/highscores/entity"]
+margin_left = 204.0
+margin_right = 330.0
+margin_bottom = 36.0
+size_flags_horizontal = 11
+text = "199"
+align = 2
+
+[node name="unable_to_connect" type="Label" parent="node/Panel/container/highscores"]
+visible = false
+margin_right = 330.0
+margin_bottom = 75.0
+custom_fonts/font = SubResource( 11 )
+text = "Unable to get highscores. Check your internet connection"
+align = 1
+autowrap = true
+
+[node name="close" type="Button" parent="node/Panel"]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -49.0
+margin_top = -45.0
+margin_right = 49.0
+margin_bottom = -8.0
+custom_fonts/font = SubResource( 12 )
+text = "Close"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Camera2D" type="Camera2D" parent="."]
+current = true
+limit_left = 0
+limit_top = 0
+limit_bottom = 600
+script = SubResource( 13 )
+[connection signal="pressed" from="node/buttons/play" to="node/buttons" method="_on_play_pressed"]
+[connection signal="pressed" from="node/buttons/leaderboard" to="node/buttons" method="_on_leaderboard_pressed"]
+[connection signal="request_completed" from="node/buttons/leaderboard/HTTPRequest" to="node/Panel" method="_on_HTTPRequest_request_completed"]
+[connection signal="pressed" from="node/buttons/quit" to="node/buttons" method="_on_quit_pressed"]
+[connection signal="pressed" from="node/Panel/close" to="node/Panel" method="_on_close_pressed"]

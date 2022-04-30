@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://objects/gun.gd" type="Script" id=1]
+[ext_resource path="res://assets/sGun.png" type="Texture" id=2]
+
+[node name="gun" type="Sprite"]
+position = Vector2( 0, 11 )
+texture = ExtResource( 2 )
+offset = Vector2( 4.253, 0 )
+script = ExtResource( 1 )
+
+[node name="muzzle" type="Position2D" parent="."]
+position = Vector2( 18.8012, 0 )
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 0.2
+autostart = true
+[connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]
